@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -40,12 +44,36 @@ export default function Footer() {
     },
   ];
 
+  // Staggered entrance
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+    },
+  };
+
+  const child = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
   return (
-    <footer className="relative px-6 py-12 border-t border-neutral-200 dark:border-neutral-800">
+    <motion.footer
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.8 }}
+      variants={container}
+      className="relative px-6 py-12 border-t border-neutral-200 dark:border-neutral-800"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           {/* Logo / Brand */}
-          <div className="text-center md:text-left opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
+          <motion.div variants={child} className="text-center md:text-left">
             <a
               href="#"
               className="text-xl font-semibold tracking-tight bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-400 bg-clip-text text-transparent"
@@ -55,30 +83,36 @@ export default function Footer() {
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
               Build. Scale. Grow.
             </p>
-          </div>
+          </motion.div>
 
           {/* Social Links */}
-          <div className="flex items-center gap-6 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.1s_forwards]">
+          <motion.div variants={child} className="flex items-center gap-6">
             {socialLinks.map((link) => (
-              <a
+              <motion.a
                 key={link.name}
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.name}
-                className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 hover:scale-110"
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200"
               >
                 {link.icon}
-              </a>
+              </motion.a>
             ))}
-          </div>
+          </motion.div>
 
           {/* Copyright */}
-          <div className="text-sm text-neutral-500 dark:text-neutral-400 text-center md:text-right opacity-0 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
+          <motion.div
+            variants={child}
+            className="text-sm text-neutral-500 dark:text-neutral-400 text-center md:text-right"
+          >
             © {currentYear} DevAgency. All rights reserved.
-          </div>
+          </motion.div>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }

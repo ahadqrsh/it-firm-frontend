@@ -1,6 +1,24 @@
+"use client";
+
+import { useRef } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
 export default function Portfolio() {
+  const sectionRef = useRef(null);
+
+  // Scroll progress relative to this section
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax y‑offsets for each project card
+  const yCard1 = useTransform(scrollYProgress, [0, 1], [0, -25]);
+  const yCard2 = useTransform(scrollYProgress, [0, 1], [0, -45]);
+  const yCard3 = useTransform(scrollYProgress, [0, 1], [0, -15]);
+  const cardYs = [yCard1, yCard2, yCard3];
+
   const projects = [
     {
       title: "Fintech Dashboard",
@@ -22,36 +40,69 @@ export default function Portfolio() {
     },
   ];
 
+  // Staggered entrance variants
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2, delayChildren: 0.2 },
+    },
+  };
+
+  const child = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+
   return (
-    <section id="portfolio" className="relative px-6 py-24 overflow-hidden">
+    <motion.section
+      ref={sectionRef}
+      id="portfolio"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={container}
+      className="relative px-6 py-24 overflow-hidden"
+    >
       {/* Ambient background */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-neutral-50/30 to-transparent dark:via-neutral-900/20" />
 
       <div className="max-w-7xl mx-auto">
-        {/* Section header */}
-        <div className="flex items-center gap-4 mb-12 opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
+        {/* Section label */}
+        <motion.div variants={child} className="flex items-center gap-4 mb-12">
           <span className="h-px w-12 bg-neutral-300 dark:bg-neutral-700" />
           <span className="text-sm font-medium tracking-widest text-neutral-500 dark:text-neutral-400 uppercase">
             Selected Work
           </span>
-        </div>
+        </motion.div>
 
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-16 max-w-2xl opacity-0 animate-[fadeInUp_0.6s_ease-out_0.1s_forwards]">
+        {/* Section headline */}
+        <motion.h2
+          variants={child}
+          className="text-4xl md:text-5xl font-bold tracking-tight mb-16 max-w-2xl"
+        >
           <span className="bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-400 bg-clip-text text-transparent">
             Projects we're proud of
           </span>
-        </h2>
+        </motion.h2>
 
         {/* Project grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <div
+            <motion.div
               key={project.title}
-              className="group relative opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]"
-              style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+              variants={child}
+              style={{ y: cardYs[index] }}  // parallax scroll
+              whileHover={{ y: -10 }}        // lift on hover overrides scroll
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="group relative"
             >
               {/* Card container */}
-              <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-2xl transition-all duration-500">
+              <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm group-hover:shadow-2xl transition-all duration-500">
                 {/* Image area */}
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img
@@ -60,8 +111,10 @@ export default function Portfolio() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                  
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                  />
+
                   {/* Hover overlay with link */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="px-6 py-3 bg-white/90 dark:bg-black/90 backdrop-blur-sm rounded-full text-sm font-medium text-neutral-900 dark:text-white shadow-lg transform -translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
@@ -84,28 +137,38 @@ export default function Portfolio() {
                 {/* Subtle border animation */}
                 <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-neutral-300 dark:group-hover:border-neutral-700 pointer-events-none transition-colors duration-500" />
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* View all link */}
-        <div className="mt-12 text-center opacity-0 animate-[fadeIn_0.6s_ease-out_0.8s_forwards]">
-          <a
+        <motion.div
+          variants={child}
+          className="mt-12 text-center"
+        >
+          <motion.a
             href="#"
-            className="inline-flex items-center text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-300 group"
+            whileHover={{ x: 4 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="inline-flex items-center text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors duration-300"
           >
             <span className="text-sm font-medium">View all projects</span>
             <svg
-              className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
+              className="ml-2 w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
             </svg>
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }

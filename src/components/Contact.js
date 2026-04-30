@@ -1,15 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
 import { User, Mail, MessageSquare, Send, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function Contact() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const blobBlueY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const blobPurpleY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const formCardY = useTransform(scrollYProgress, [0, 1], [0, -15]);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     message: "",
   });
-  const [status, setStatus] = useState("idle"); // idle, loading, success, error
+  const [status, setStatus] = useState("idle");
   const [focusedField, setFocusedField] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -19,14 +30,12 @@ export default function Contact() {
     try {
       const response = await fetch("http://localhost:5000/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       if (!response.ok) throw new Error("Failed to send");
-      
+
       setStatus("success");
       setForm({ name: "", email: "", message: "" });
     } catch (error) {
@@ -38,23 +47,45 @@ export default function Contact() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+    },
+  };
+
+  const child = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+
   return (
-    <section id="contact" className="relative px-6 py-24 overflow-hidden">
-      {/* Ambient background */}
+    <motion.section
+      ref={sectionRef}
+      id="contact"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={container}
+      className="relative px-6 py-24 overflow-hidden"
+    >
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-neutral-50/50 via-transparent to-transparent dark:from-neutral-900/30" />
 
       <div className="max-w-7xl mx-auto">
-        {/* Section header */}
-        <div className="flex items-center gap-4 mb-12 opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
+        <motion.div variants={child} className="flex items-center gap-4 mb-12">
           <span className="h-px w-12 bg-neutral-300 dark:bg-neutral-700" />
           <span className="text-sm font-medium tracking-widest text-neutral-500 dark:text-neutral-400 uppercase">
             Get In Touch
           </span>
-        </div>
+        </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24">
-          {/* Left column - Headline & info */}
-          <div className="space-y-6 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.1s_forwards]">
+          <motion.div variants={child} className="space-y-6">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
               <span className="bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-400 bg-clip-text text-transparent">
                 Let's work together
@@ -64,26 +95,27 @@ export default function Contact() {
               Have a project in mind? We'd love to hear about it. 
               Send us a message and we'll get back to you within 24 hours.
             </p>
-
-            {/* Contact details (optional) */}
             <div className="pt-8 space-y-4">
               <div className="flex items-center gap-3 text-neutral-600 dark:text-neutral-400">
                 <Mail className="w-5 h-5" />
                 <span>hello@devagency.com</span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right column - Form */}
-          <div className="relative opacity-0 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
-            <div className="relative p-8 lg:p-10 rounded-3xl bg-white dark:bg-neutral-900/50 backdrop-blur-sm border border-neutral-200 dark:border-neutral-800 shadow-xl shadow-neutral-900/5 dark:shadow-black/20">
+          <motion.div variants={child} style={{ y: formCardY }} className="relative">
+            {/* ⚠️ FIX: Changed <div> to <motion.div> */}
+            <motion.div
+              whileHover={{ y: -8 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="relative p-8 lg:p-10 rounded-3xl bg-white dark:bg-neutral-900/50 backdrop-blur-sm border border-neutral-200 dark:border-neutral-800 shadow-xl shadow-neutral-900/5 dark:shadow-black/20"
+            >
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* ... form fields unchanged ... */}
                 {/* Name field */}
                 <div className="relative">
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    focusedField === "name" 
-                      ? "text-blue-600 dark:text-blue-400" 
-                      : "text-neutral-400 dark:text-neutral-500"
+                    focusedField === "name" ? "text-blue-600 dark:text-blue-400" : "text-neutral-400 dark:text-neutral-500"
                   }`}>
                     <User className="w-5 h-5" />
                   </div>
@@ -103,9 +135,7 @@ export default function Contact() {
                 {/* Email field */}
                 <div className="relative">
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${
-                    focusedField === "email" 
-                      ? "text-blue-600 dark:text-blue-400" 
-                      : "text-neutral-400 dark:text-neutral-500"
+                    focusedField === "email" ? "text-blue-600 dark:text-blue-400" : "text-neutral-400 dark:text-neutral-500"
                   }`}>
                     <Mail className="w-5 h-5" />
                   </div>
@@ -125,9 +155,7 @@ export default function Contact() {
                 {/* Message field */}
                 <div className="relative">
                   <div className={`absolute left-4 top-5 transition-colors duration-200 ${
-                    focusedField === "message" 
-                      ? "text-blue-600 dark:text-blue-400" 
-                      : "text-neutral-400 dark:text-neutral-500"
+                    focusedField === "message" ? "text-blue-600 dark:text-blue-400" : "text-neutral-400 dark:text-neutral-500"
                   }`}>
                     <MessageSquare className="w-5 h-5" />
                   </div>
@@ -144,7 +172,6 @@ export default function Contact() {
                   />
                 </div>
 
-                {/* Submit button */}
                 <button
                   type="submit"
                   disabled={status === "loading"}
@@ -169,29 +196,44 @@ export default function Contact() {
                   <div className="absolute inset-0 bg-gradient-to-r from-neutral-800 to-neutral-900 dark:from-neutral-100 dark:to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </button>
 
-                {/* Status messages */}
                 {status === "success" && (
-                  <div className="flex items-center gap-2 p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 animate-[fadeIn_0.3s_ease-out]">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex items-center gap-2 p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400"
+                  >
                     <CheckCircle className="w-5 h-5 flex-shrink-0" />
                     <span className="text-sm">Message sent successfully! We'll be in touch soon.</span>
-                  </div>
+                  </motion.div>
                 )}
 
                 {status === "error" && (
-                  <div className="flex items-center gap-2 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 animate-[fadeIn_0.3s_ease-out]">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex items-center gap-2 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400"
+                  >
                     <AlertCircle className="w-5 h-5 flex-shrink-0" />
                     <span className="text-sm">Something went wrong. Please try again.</span>
-                  </div>
+                  </motion.div>
                 )}
               </form>
-            </div>
+            </motion.div>
 
-            {/* Decorative elements */}
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-blue-500/10 dark:bg-blue-400/5 rounded-full blur-3xl -z-10" />
-            <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-purple-500/10 dark:bg-purple-400/5 rounded-full blur-3xl -z-10" />
-          </div>
+            {/* Parallax blobs */}
+            <motion.div
+              style={{ y: blobBlueY }}
+              className="absolute -top-6 -right-6 w-32 h-32 bg-blue-500/10 dark:bg-blue-400/5 rounded-full blur-3xl -z-10"
+            />
+            <motion.div
+              style={{ y: blobPurpleY }}
+              className="absolute -bottom-8 -left-8 w-40 h-40 bg-purple-500/10 dark:bg-purple-400/5 rounded-full blur-3xl -z-10"
+            />
+          </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
