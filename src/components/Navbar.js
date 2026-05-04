@@ -10,124 +10,82 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = ["About", "Services", "Portfolio", "Contact"];
 
-  // Entrance animation for the whole nav (runs only once on mount)
-  const navbarVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
-
   return (
-    <motion.nav
-      initial="hidden"
-      animate="visible"
-      variants={navbarVariants}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-sm py-3"
-          : "bg-transparent py-5"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        {/* Logo */}
-        <a
-          href="#"
-          className="text-2xl font-semibold tracking-tight bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-400 bg-clip-text text-transparent"
-        >
-          DevAgency
-        </a>
+    <>
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:pt-5"
+      >
+        <div className={`mx-auto transition-all duration-300 ${
+          scrolled ? "max-w-5xl" : "max-w-6xl"
+        }`}>
+          <div className="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-full shadow-lg border border-slate-200 px-4 py-2 sm:px-6">
+            <div className="flex justify-between items-center">
+              <a href="#" className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-600 bg-clip-text text-transparent">
+                DevAgency
+              </a>
 
-        {/* Desktop Navigation with animated underline */}
-        <div className="hidden md:flex items-center space-x-10">
-          {navLinks.map((link) => (
-            <motion.a
-              key={link}
-              href={`#${link.toLowerCase()}`}
-              whileHover={{ y: -1 }}
-              className="relative text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors duration-200"
-            >
-              {link}
-              {/* Animated underline using motion.span */}
-              <motion.span
-                className="absolute bottom-0 left-0 h-[2px] bg-black dark:bg-white"
-                initial={{ width: 0 }}
-                whileHover={{ width: "100%" }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              />
-            </motion.a>
-          ))}
-        </div>
+              {/* Desktop menu */}
+              <div className="hidden md:flex items-center gap-1">
+                {navLinks.map((link) => (
+                  <a
+                    key={link}
+                    href={`#${link.toLowerCase()}`}
+                    className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-full hover:bg-slate-100 transition"
+                  >
+                    {link}
+                  </a>
+                ))}
+                
+              </div>
 
-        {/* Mobile Menu Toggle */}
-        <motion.button
-          onClick={() => setIsOpen(!isOpen)}
-          whileTap={{ scale: 0.9 }}
-          className="md:hidden p-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-          aria-label="Toggle menu"
-        >
-          <AnimatePresence mode="wait">
-            {isOpen ? (
-              <motion.span
-                key="x"
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
+              {/* Mobile toggle */}
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="md:hidden p-2 rounded-full text-slate-600 hover:bg-slate-100 transition"
+                aria-label="Menu"
               >
-                <X size={22} />
-              </motion.span>
-            ) : (
-              <motion.span
-                key="menu"
-                initial={{ rotate: 90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: -90, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Menu size={22} />
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </motion.button>
-      </div>
-
-      {/* Mobile Menu Dropdown with AnimatePresence */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0, y: -10 }}
-            animate={{ opacity: 1, height: "auto", y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden absolute top-full left-0 w-full bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 overflow-hidden"
-          >
-            <div className="px-6 py-6 space-y-4">
-              {navLinks.map((link, i) => (
-                <motion.a
-                  key={link}
-                  href={`#${link.toLowerCase()}`}
-                  onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="block text-base font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors py-1"
-                >
-                  {link}
-                </motion.a>
-              ))}
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+
+            {/* Mobile dropdown */}
+            <AnimatePresence>
+              {isOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="md:hidden mt-4 pt-2 border-t border-slate-100"
+                >
+                  <div className="flex flex-col space-y-3 pb-3">
+                    {navLinks.map((link) => (
+                      <a
+                        key={link}
+                        href={`#${link.toLowerCase()}`}
+                        onClick={() => setIsOpen(false)}
+                        className="block px-4 py-3 text-base font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl"
+                      >
+                        {link}
+                      </a>
+                    ))}
+                   
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.nav>
+      <div className="h-20 sm:h-24" />
+    </>
   );
 }
