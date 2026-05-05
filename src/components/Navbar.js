@@ -5,8 +5,11 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+
+  const navLinks = ["About", "Services", "Portfolio", "Contact"];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -14,78 +17,111 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = ["About", "Services", "Portfolio", "Contact"];
+  useEffect(() => {
+    const sections = navLinks.map(link => link.toLowerCase());
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-50% 0px -50% 0px", threshold: 0 }
+    );
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToSection = (e, href) => {
+    e.preventDefault();
+    const targetId = href.substring(1);
+    const element = document.getElementById(targetId);
+    if (element) {
+      const isMobile = window.innerWidth < 768;
+      const offset = isMobile ? 220 : 100;
+      const top = element.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+    setIsOpen(false);
+  };
 
   return (
     <>
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:pt-5"
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/90 backdrop-blur-md shadow-md py-2"
+            : "bg-white/80 backdrop-blur-sm py-3"
+        }`}
       >
-        <div className={`mx-auto transition-all duration-300 ${
-          scrolled ? "max-w-5xl" : "max-w-6xl"
-        }`}>
-          <div className="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-full shadow-lg border border-slate-200 px-4 py-2 sm:px-6">
-            <div className="flex justify-between items-center">
-              <a href="#" className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-600 bg-clip-text text-transparent">
-                DevAgency
-              </a>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center">
+          {/* Logo – unchanged */}
+          <a href="#" onClick={(e) => scrollToSection(e, "#")}>
+            <img src="/textlogo.svg" alt="DevAgency" className="h-40 w-40" />
+          </a>
 
-              {/* Desktop menu */}
-              <div className="hidden md:flex items-center gap-1">
-                {navLinks.map((link) => (
-                  <a
-                    key={link}
-                    href={`#${link.toLowerCase()}`}
-                    className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-full hover:bg-slate-100 transition"
-                  >
-                    {link}
-                  </a>
-                ))}
-                
-              </div>
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.toLowerCase();
+              return (
+                <a
+                  key={link}
+                  href={`#${link.toLowerCase()}`}
+                  onClick={(e) => scrollToSection(e, `#${link.toLowerCase()}`)}
+                  className={`px-4 py-2 text-sm font-medium rounded-full transition ${
+                    isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-slate-600 hover:text-blue-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {link}
+                </a>
+              );
+            })}
+          </div>
 
-              {/* Mobile toggle */}
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden p-2 rounded-full text-slate-600 hover:bg-slate-100 transition"
-                aria-label="Menu"
-              >
-                {isOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
+          {/* Mobile menu – fixed positioning for reliability */}
+          <div className="md:hidden relative">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition"
+              aria-label="Menu"
+              style={{ minWidth: 44, minHeight: 44 }}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
 
-            {/* Mobile dropdown */}
+            {/* Dropdown – positioned absolutely below the button */}
             <AnimatePresence>
               {isOpen && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="md:hidden mt-4 pt-2 border-t border-slate-100"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50"
                 >
-                  <div className="flex flex-col space-y-3 pb-3">
-                    {navLinks.map((link) => (
-                      <a
-                        key={link}
-                        href={`#${link.toLowerCase()}`}
-                        onClick={() => setIsOpen(false)}
-                        className="block px-4 py-3 text-base font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl"
-                      >
-                        {link}
-                      </a>
-                    ))}
-                   
-                  </div>
+                  {navLinks.map((link) => (
+                    <a
+                      key={link}
+                      href={`#${link.toLowerCase()}`}
+                      onClick={(e) => scrollToSection(e, `#${link.toLowerCase()}`)}
+                      className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+                    >
+                      {link}
+                    </a>
+                  ))}
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </div>
-      </motion.nav>
-      <div className="h-20 sm:h-24" />
+      </nav>
+
+      {/* Spacer – ensures content starts below the huge logo */}
+      <div className="h-48 md:h-32" />
     </>
   );
 }
