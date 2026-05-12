@@ -2,147 +2,320 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Code2, Rocket, Users, Zap, Award, Globe, Clock, Heart } from "lucide-react";
+
+import {
+  Code2,
+  Rocket,
+  Users,
+  Zap,
+  Award,
+  Globe,
+  Clock,
+  Heart,
+} from "lucide-react";
 
 export default function About() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+
+  const isInView = useInView(ref, {
+    once: true,
+    amount: 0.2,
+  });
 
   const fadeUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+    hidden: {
+      opacity: 0,
+      y: 40,
+    },
+
+    visible: {
+      opacity: 1,
+      y: 0,
+
+      transition: {
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
   };
 
   const stagger = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+    hidden: {
+      opacity: 0,
+    },
+
+    visible: {
+      opacity: 1,
+
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.15,
+      },
+    },
   };
 
   const values = [
-    { icon: Code2, title: "Technical Excellence", desc: "Modern stacks, clean code, best practices" },
-    { icon: Rocket, title: "Innovation First", desc: "Cutting-edge solutions tailored to you" },
-    { icon: Users, title: "Client‑Centric", desc: "Your goals become our roadmap" },
-    { icon: Zap, title: "Fast Delivery", desc: "Agile methodology, on‑time results" },
+    {
+      icon: Code2,
+      title: "Technical Excellence",
+      desc: "Modern stacks, scalable architecture, and clean code.",
+    },
+
+    {
+      icon: Rocket,
+      title: "Innovation First",
+      desc: "Future-ready solutions designed for growth.",
+    },
+
+    {
+      icon: Users,
+      title: "Client Focused",
+      desc: "Your business goals become our strategy.",
+    },
+
+    {
+      icon: Zap,
+      title: "Fast Delivery",
+      desc: "Agile workflow with efficient execution.",
+    },
   ];
 
   const stats = [
-    { value: "5+", label: "Years", icon: Clock },
-    { value: "50+", label: "Projects", icon: Code2 },
-    { value: "100%", label: "Satisfaction", icon: Heart },
-    { value: "24/7", label: "Support", icon: Globe },
+    {
+      value: "5+",
+      label: "Years",
+      icon: Clock,
+    },
+
+    {
+      value: "50+",
+      label: "Projects",
+      icon: Code2,
+    },
+
+    {
+      value: "100%",
+      label: "Satisfaction",
+      icon: Heart,
+    },
+
+    {
+      value: "24/7",
+      label: "Support",
+      icon: Globe,
+    },
   ];
 
   return (
-    <section id="about" ref={ref} className="relative px-6 py-20 overflow-hidden bg-white">
-      {/* Subtle background gradient */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50/50 to-white" />
+    <section
+      id="about"
+      ref={ref}
+      className="relative overflow-hidden bg-[#09090B] px-6 py-28"
+    >
+      {/* Background Glow */}
+      <div className="absolute inset-0 overflow-hidden">
 
-      <div className="max-w-6xl mx-auto">
-        {/* Section header */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl" />
+
+        <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl" />
+
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto">
+
+        {/* Section Header */}
         <motion.div
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
           variants={fadeUp}
-          className="text-center mb-14"
+          className="text-center mb-20"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-full">
-            <Award className="w-3.5 h-3.5" />
-            Who We Are
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mt-4 mb-3">
+
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl mb-6">
+
+            <Award className="w-4 h-4 text-cyan-400" />
+
+            <span className="text-sm font-medium text-cyan-300 uppercase tracking-wider">
+              Who We Are
+            </span>
+
+          </div>
+
+          {/* Heading */}
+          <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+
             About{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+
+            <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-violet-400 bg-clip-text text-transparent">
               DevAgency
             </span>
+
           </h2>
-          <p className="text-slate-600 max-w-2xl mx-auto text-lg">
-            We craft digital experiences that drive real business growth.
+
+          {/* Description */}
+          <p className="mt-6 text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed">
+            We create modern digital experiences that help
+            businesses scale, grow, and dominate online.
           </p>
+
         </motion.div>
 
-        {/* Main description with two columns */}
+        {/* Main Content */}
         <motion.div
           variants={stagger}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid md:grid-cols-2 gap-10 mb-16"
+          className="grid md:grid-cols-2 gap-10 mb-20"
         >
-          <motion.div variants={fadeUp} className="space-y-4">
-            <p className="text-slate-600 leading-relaxed">
-              Founded in 2020, DevAgency has grown from a small development team into a full‑service digital agency
-              trusted by businesses worldwide. We blend technical expertise with creative thinking to build solutions
-              that truly make a difference.
+
+          {/* Left Text */}
+          <motion.div
+            variants={fadeUp}
+            className="space-y-6"
+          >
+
+            <p className="text-zinc-400 leading-relaxed text-lg">
+              Founded with a passion for innovation,
+              DevAgency combines cutting-edge development
+              with powerful digital strategy to create
+              scalable online experiences.
             </p>
-            <p className="text-slate-600 leading-relaxed">
-              Our philosophy is simple: deeply understand your business, design with purpose, and build with precision.
-              We don't just write code — we solve problems and create lasting value.
+
+            <p className="text-zinc-400 leading-relaxed text-lg">
+              We don't just build websites —
+              we craft digital ecosystems that attract,
+              convert, and retain customers.
             </p>
+
           </motion.div>
-          <motion.div variants={fadeUp} className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                <Users className="w-4 h-4 text-white" />
+
+          {/* Mission Card */}
+          <motion.div
+            variants={fadeUp}
+            whileHover={{
+              y: -5,
+            }}
+            className="relative p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.37)] overflow-hidden"
+          >
+
+            {/* Glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-blue-500/5" />
+
+            <div className="relative z-10">
+
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-5 shadow-lg">
+
+                <Users className="w-6 h-6 text-white" />
+
               </div>
-              <h3 className="font-semibold text-slate-900">Our mission</h3>
+
+              <h3 className="text-2xl font-semibold text-white mb-4">
+                Our Mission
+              </h3>
+
+              <p className="text-zinc-400 leading-relaxed">
+                To empower brands with scalable,
+                human-centered digital solutions that
+                blend creativity, strategy, and technology.
+              </p>
+
             </div>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              To empower businesses with innovative, scalable, and human‑centered digital solutions that elevate their
-              brand and accelerate growth — without compromising on quality or creativity.
-            </p>
+
           </motion.div>
+
         </motion.div>
 
-        {/* Values grid */}
+        {/* Values Grid */}
         <motion.div
           variants={stagger}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24"
         >
+
           {values.map((item, idx) => {
             const Icon = item.icon;
+
             return (
               <motion.div
                 key={idx}
                 variants={fadeUp}
-                whileHover={{ y: -6 }}
-                className="group p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
+                whileHover={{
+                  y: -8,
+                  scale: 1.02,
+                }}
+                className="group relative p-7 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-2xl overflow-hidden transition-all duration-500"
               >
-                <div className="w-12 h-12 mb-4 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center shadow-sm group-hover:shadow-md transition">
-                  <Icon className="w-5 h-5 text-white" />
+
+                {/* Glow Hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-r from-blue-500/10 to-cyan-500/10" />
+
+                <div className="relative z-10">
+
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-5 shadow-lg">
+
+                    <Icon className="w-6 h-6 text-white" />
+
+                  </div>
+
+                  <h3 className="text-xl font-semibold text-white mb-3">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-zinc-400 leading-relaxed text-sm">
+                    {item.desc}
+                  </p>
+
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+
               </motion.div>
             );
           })}
+
         </motion.div>
 
-        {/* Stats row with icons */}
+        {/* Stats */}
         <motion.div
           variants={stagger}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="flex flex-wrap justify-center gap-8 pt-8 border-t border-slate-100"
+          className="grid grid-cols-2 md:grid-cols-4 gap-8"
         >
+
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
+
             return (
               <motion.div
                 key={idx}
                 variants={fadeUp}
-                whileHover={{ scale: 1.05 }}
-                className="text-center min-w-[100px]"
+                whileHover={{
+                  y: -4,
+                }}
+                className="text-center"
               >
-                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-blue-50 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-blue-600" />
+
+                <div className="w-14 h-14 mx-auto rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl flex items-center justify-center mb-4">
+
+                  <Icon className="w-5 h-5 text-cyan-400" />
+
                 </div>
-                <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
-                <div className="text-xs text-slate-500 uppercase tracking-wide">{stat.label}</div>
+
+                <div className="text-4xl font-bold text-white mb-2">
+                  {stat.value}
+                </div>
+
+                <div className="text-zinc-500 uppercase tracking-wider text-sm">
+                  {stat.label}
+                </div>
+
               </motion.div>
             );
           })}
+
         </motion.div>
+
       </div>
     </section>
   );

@@ -39,3 +39,34 @@ img {
     min-width: 44px;
   }
 }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #09090B;
+  color: white;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Smooth Glow Animation */
+@keyframes pulseGlow {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+}
