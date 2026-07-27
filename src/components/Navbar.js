@@ -89,7 +89,7 @@ export default function Navbar() {
                 onClick={() => scrollToSection("#")}
                 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-400 bg-clip-text text-transparent"
               >
-                DevAgency
+                DevByBit
               </motion.button>
 
               {/* Desktop Menu */}

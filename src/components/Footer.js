@@ -88,7 +88,7 @@ export default function Footer() {
               href="#"
               className="inline-block text-3xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-400 bg-clip-text text-transparent"
             >
-              DevAgency
+              DevByBit
             </a>
 
             {/* Description */}
