@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Lenis from "lenis";
+import Image from "next/image";
+
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -83,14 +85,24 @@ export default function Navbar() {
             <div className="flex justify-between items-center">
 
               {/* Logo */}
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => scrollToSection("#")}
-                className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-400 bg-clip-text text-transparent"
-              >
-                DevByBit
-              </motion.button>
+<motion.button
+  whileHover={{ scale: 1.03 }}
+  whileTap={{ scale: 0.97 }}
+  onClick={() => scrollToSection("#")}
+  className="flex items-center gap-2 sm:gap-2.5"
+>
+  <Image
+    src="/icon.png"
+    alt="DevByBit logo"
+    width={40}
+    height={40}
+    priority
+    className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg object-contain"
+  />
+  <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-400 bg-clip-text text-transparent">
+    DevByBit
+  </span>
+</motion.button>
 
               {/* Desktop Menu */}
               <div className="hidden md:flex items-center gap-1">

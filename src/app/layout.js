@@ -2,7 +2,7 @@ import SmoothScrolling from "@/components/SmoothScrolling";
 import "./globals.css";
 
 export const metadata = {
-  title: "DevAgency | Modern Web Solutions",
+  title: "DevByBit | Modern Web Solutions",
   description: "Transform your digital presence with cutting-edge web development",
   viewport: "width=device-width, initial-scale=1",
 };
